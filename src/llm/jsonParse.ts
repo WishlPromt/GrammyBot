@@ -1,18 +1,41 @@
 import * as z from "zod"
 
-export const toolCallShema = z.object({
-    name: z.string(),
-    arguments: z.object({
-        location: z.string()
+export const toolCallSchemas = z.discriminatedUnion("name", [
+    z.object({
+        name: z.literal("get_weather"),
+        arguments: z.object({
+            location: z.string()
+        })
+    }),
+    z.object({
+        name: z.literal("get_utc"),
+        arguments: z.object()
+    }),
+    z.object({
+        name: z.literal("convert_currency"),
+        arguments: z.object({
+            amount: z.string(),
+            from: z.string(),
+            to: z.string()
+        })
     })
-})
+])
 
-function parseJSON(content: string) {
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+export type ToolCallSchema = z.infer<typeof toolCallSchemas>
 
-    if (jsonMatch) {
-        const parsed = toolCallShema.parse(jsonMatch[0])
+export function parseJSON(content: string): ToolCallSchema | null {
+    try {
+        let jsonObject = JSON.parse(content)
+
+        if (Array.isArray(jsonObject) && jsonObject.length > 0) {
+            jsonObject = jsonObject[0]
+        }
+
+        const parsed = toolCallSchemas.parse(jsonObject)
 
         return parsed
+    } catch(e) {
+        console.error(`Error when parsing object: ${e}`)
+        return null
     }
 }

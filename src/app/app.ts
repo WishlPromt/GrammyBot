@@ -3,7 +3,7 @@ import type { OllamaInput } from "@langchain/ollama";
 import { LLMAgent } from "../llm/agent";
 import { CommandsHadler } from "../handlers/commands/commandsHandler";
 import { MessagesHandler } from "../handlers/messages/messagesHandler";
-import { weatherTool } from "../llm/toolsDefintions";
+import { tools } from "../llm/tools/toolsDefintions";
 
 export class App {
     bot: Bot
@@ -11,7 +11,7 @@ export class App {
 
     constructor(botToken: string, modelSetting: OllamaInput, systemMessage: string) {
         this.bot = new Bot(botToken)
-        this.llmAgent = new LLMAgent(modelSetting, [weatherTool], systemMessage)
+        this.llmAgent = new LLMAgent(modelSetting, tools, systemMessage)
     }
 
     setupBot() {

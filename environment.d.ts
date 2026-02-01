@@ -3,7 +3,7 @@ declare global {
         interface ProcessEnv {
             TOKEN: string
             MODEL: string
-            SYSTEM_PROMPT: string
+            WEATHER_API_KEY: string
         }
     }
 }
